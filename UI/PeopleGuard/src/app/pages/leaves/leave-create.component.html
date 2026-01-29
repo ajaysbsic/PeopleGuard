@@ -1,0 +1,83 @@
+<div class="leave-create">
+  <header class="page-header">
+    <div>
+      <h1>{{ 'LEAVES.CREATE_TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'LEAVES.CREATE_SUBTITLE' | translate }}</p>
+    </div>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="form-card">
+    <div class="grid">
+      <label>
+        <span>{{ 'LEAVES.EMPLOYEE_ID' | translate }} *</span>
+        <input type="text" formControlName="employeeId" placeholder="E123" />
+      </label>
+      <label>
+        <span>{{ 'LEAVES.EMPLOYEE_NAME' | translate }} *</span>
+        <input type="text" formControlName="employeeName" placeholder="Jane Doe" />
+      </label>
+      <label>
+        <span>{{ 'LEAVES.TYPE' | translate }} *</span>
+        <select formControlName="type">
+          <option *ngFor="let t of leaveTypes" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </label>
+      <label>
+        <span>{{ 'LEAVES.START_DATE' | translate }} *</span>
+        <input type="date" formControlName="startDate" />
+      </label>
+      <label>
+        <span>{{ 'LEAVES.END_DATE' | translate }} *</span>
+        <input type="date" formControlName="endDate" />
+      </label>
+      <label class="full">
+        <span>{{ 'LEAVES.REASON' | translate }}</span>
+        <textarea rows="4" formControlName="reason" placeholder="{{ 'LEAVES.REASON_PLACEHOLDER' | translate }}"></textarea>
+      </label>
+    </div>
+
+    <div class="attachments">
+      <div class="attachments-header">
+        <h3>{{ 'LEAVES.ATTACHMENTS' | translate }}</h3>
+        <p class="hint">{{ 'LEAVES.ATTACHMENTS_HINT' | translate }}</p>
+        <label class="upload-btn">
+          <input type="file" hidden (change)="onFilesSelected($event)" multiple />
+          <span>{{ 'LEAVES.ADD_FILES' | translate }}</span>
+        </label>
+      </div>
+
+      <div *ngIf="uploadError()" class="error" role="alert">{{ uploadError() }}</div>
+
+      <ul class="upload-list" *ngIf="attachments().length > 0">
+        <li *ngFor="let a of attachments()">
+          <div class="file-info">
+            <strong>{{ a.fileName }}</strong>
+            <small>{{ a.progress.progress }}%</small>
+          </div>
+          <div class="progress" [class.error]="a.progress.status === 'error'">
+            <div class="bar" [style.width.%]="a.progress.progress"></div>
+          </div>
+          <div class="status">{{ a.progress.status }}</div>
+        </li>
+      </ul>
+
+      <ul class="uploaded" *ngIf="uploadedFiles().length > 0">
+        <li *ngFor="let f of uploadedFiles()">
+          <span>{{ f.fileName }}</span>
+          <button type="button" class="link" (click)="removeAttachment(f.fileId)">{{ 'LEAVES.REMOVE_FILE' | translate }}</button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="form-footer">
+      <label class="toggle">
+        <input type="checkbox" formControlName="submitNow" />
+        <span>{{ 'LEAVES.SUBMIT_NOW' | translate }}</span>
+      </label>
+      <div class="actions">
+        <button type="submit" class="btn btn-primary" [disabled]="loading()">{{ loading() ? ('COMMON.LOADING' | translate) : ('LEAVES.SUBMIT' | translate) }}</button>
+        <div *ngIf="error()" class="error" role="alert">{{ error() }}</div>
+      </div>
+    </div>
+  </form>
+</div>

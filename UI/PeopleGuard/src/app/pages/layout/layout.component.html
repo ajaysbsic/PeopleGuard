@@ -1,0 +1,28 @@
+<header class="toolbar">
+  <div class="app-logo">
+    <img src="assets/images/alfanar.png" alt="Alfanar" class="logo-image">
+  </div>
+  <div class="app-title">
+    <h1>PeopleGuard</h1>
+    <span class="subtitle">Employee Investigation System</span>
+  </div>
+  <div class="toolbar-spacer"></div>
+  <div class="toolbar-actions">
+    <button class="theme-toggle-btn" (click)="toggleTheme()" [title]="theme$() === 'dark' ? 'Light Mode' : 'Dark Mode'">
+      <span *ngIf="theme$() === 'light'">🌙</span>
+      <span *ngIf="theme$() === 'dark'">☀️</span>
+    </button>
+    <pg-language-switcher></pg-language-switcher>
+    <div class="user-info">
+      <span *ngIf="auth.user()">{{ auth.user()?.email }}</span>
+    </div>
+    <button class="logout-btn" (click)="logout()">Logout</button>
+  </div>
+</header>
+
+<div class="main-container">
+  <pg-sidebar></pg-sidebar>
+  <main class="content">
+    <router-outlet></router-outlet>
+  </main>
+</div>

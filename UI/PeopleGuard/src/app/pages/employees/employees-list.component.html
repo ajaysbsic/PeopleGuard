@@ -1,0 +1,47 @@
+<div class="employees-container">
+  <div class="hero-banner">
+    <img src="assets/images/alf_factory.jpg" alt="Factory" loading="lazy">
+  </div>
+
+  <div class="header">
+    <h2>Employees</h2>
+    <button *ngIf="canEditEmployee" class="btn-add" (click)="openAddModal()">+ Add Employee</button>
+  </div>
+
+  <div *ngIf="loading" class="loading">Loading employees...</div>
+
+  <div *ngIf="!loading && items.length === 0" class="empty-state">
+    <p>No employees found. Create your first employee to get started.</p>
+  </div>
+
+  <table *ngIf="!loading && items.length > 0" class="employees-table">
+    <thead>
+      <tr>
+        <th>Employee ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Department</th>
+        <th>Factory</th>
+        <th>Position</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let e of items">
+        <td>{{ e.employeeId }}</td>
+        <td>{{ e.name }}</td>
+        <td>{{ e.email }}</td>
+        <td>{{ e.department }}</td>
+        <td>{{ e.factory }}</td>
+        <td>{{ e.designation }}</td>
+        <td class="actions">
+          <a [routerLink]="['/employees', e.id]" class="link-view">View</a>
+          <button *ngIf="canEditEmployee" class="link-edit" (click)="openEditModal(e)">Edit</button>
+          <button *ngIf="canEditEmployee" class="link-delete" (click)="deleteEmployee(e.id)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<pg-employee-modal [isOpen]="modalOpen" (onClose)="closeModal()" (onSubmit)="onSaveEmployee($event)"></pg-employee-modal>

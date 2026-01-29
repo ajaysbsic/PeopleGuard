@@ -1,0 +1,71 @@
+<div class="investigations-container">
+  <div class="header">
+    <h2>Investigations</h2>
+    <button 
+      *ngIf="canCreateInvestigation" 
+      class="btn btn-primary"
+      (click)="createInvestigation()">
+      + Create Investigation
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-state">
+    <p>Loading investigations...</p>
+  </div>
+
+  <div *ngIf="!loading && items.length === 0" class="empty-state">
+    <p>No investigations found</p>
+    <p *ngIf="canCreateInvestigation" class="hint">Create a new investigation to get started</p>
+  </div>
+
+  <div *ngIf="!loading && items.length > 0" class="table-wrapper">
+    <table class="investigations-table">
+      <thead>
+        <tr>
+          <th>Employee</th>
+          <th>Case Type</th>
+          <th>Status</th>
+          <th>Created Date</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let investigation of items" class="investigation-row">
+          <td class="employee-cell">
+            <strong>{{ investigation.employeeName }}</strong>
+            <small>ID: {{ investigation.employeeId }}</small>
+          </td>
+          <td class="case-type">{{ investigation.caseType || 'General' }}</td>
+          <td>
+            <span class="status-badge" [ngClass]="'status-' + (investigation.status | number)">
+              {{ investigation.status === 0 ? 'Open' : investigation.status === 1 ? 'Under Investigation' : 'Closed' }}
+            </span>
+          </td>
+          <td class="date">{{ investigation.createdDate | date: 'MMM d, yyyy' }}</td>
+          <td class="actions">
+            <button 
+              class="btn btn-sm btn-info"
+              [routerLink]="['/investigations', investigation.id]"
+              title="View Investigation">
+              View
+            </button>
+            <button 
+              *ngIf="investigation.status !== 2" 
+              class="btn btn-sm btn-warning"
+              [routerLink]="['/investigations', investigation.id, 'edit']"
+              title="Edit Investigation">
+              Edit
+            </button>
+            <button 
+              *ngIf="investigation.status === 0" 
+              class="btn btn-sm btn-danger"
+              (click)="deleteInvestigation(investigation.id)"
+              title="Delete Investigation">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

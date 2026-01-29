@@ -1,0 +1,424 @@
+<div class="case-detail-container">
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="skeleton-container">
+      <div class="skeleton-header">
+        <div class="skeleton skeleton-title"></div>
+        <div class="skeleton skeleton-subtitle"></div>
+      </div>
+      <div class="skeleton-tabs">
+        @for (i of [1,2,3,4]; track i) {
+          <div class="skeleton skeleton-tab"></div>
+        }
+      </div>
+      <div class="skeleton-content">
+        <div class="skeleton skeleton-card"></div>
+        <div class="skeleton skeleton-card"></div>
+      </div>
+    </div>
+  }
+
+  <!-- Error State -->
+  @if (error() && !loading()) {
+    <div class="error-state">
+      <span class="error-icon">❌</span>
+      <h3>{{ 'COMMON.ERROR' | translate }}</h3>
+      <p>{{ error() }}</p>
+      <button class="btn btn-primary" (click)="goBack()">{{ 'COMMON.GO_BACK' | translate }}</button>
+    </div>
+  }
+
+  <!-- Main Content -->
+  @if (caseDetail() && !loading()) {
+    <!-- Header -->
+    <header class="page-header">
+      <div class="header-nav">
+        <button class="btn-back" (click)="goBack()" aria-label="Go back">
+          ← {{ 'COMMON.BACK' | translate }}
+        </button>
+      </div>
+      <div class="header-content">
+        <div class="header-info">
+          <h1>{{ caseDetail()!.caseId }}</h1>
+          <span class="status-badge" [class]="getStatusClass(caseDetail()!.status)">
+            {{ caseDetail()!.statusName }}
+          </span>
+        </div>
+        <p class="case-title">{{ caseDetail()!.title }}</p>
+      </div>
+      
+      <!-- Action Bar - ER/HR only -->
+      @if (canManage()) {
+        <div class="action-bar">
+          <button class="btn btn-outline" (click)="openStatusModal()">
+            🔄 {{ 'CASES.CHANGE_STATUS' | translate }}
+          </button>
+          <button class="btn btn-outline" (click)="openRemarkModal()">
+            💬 {{ 'CASES.ADD_REMARK' | translate }}
+          </button>
+          <label class="btn btn-outline upload-btn">
+            📎 {{ 'CASES.UPLOAD_EVIDENCE' | translate }}
+            <input type="file" hidden (change)="onFileSelected($event)" 
+                   accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+          </label>
+        </div>
+      }
+    </header>
+
+    <!-- Tabs -->
+    <nav class="tabs" role="tablist">
+      @for (tab of tabs; track tab.id) {
+        <button 
+          class="tab" 
+          [class.active]="activeTab() === tab.id"
+          (click)="onTabChange(tab.id)"
+          [attr.aria-selected]="activeTab() === tab.id"
+          role="tab">
+          <span class="tab-icon">{{ tab.icon }}</span>
+          {{ tab.label | translate }}
+          @if (tab.id === 'attachments' && caseDetail()!.attachmentsCount > 0) {
+            <span class="badge">{{ caseDetail()!.attachmentsCount }}</span>
+          }
+          @if (tab.id === 'investigation' && caseDetail()!.remarksCount > 0) {
+            <span class="badge">{{ caseDetail()!.remarksCount }}</span>
+          }
+        </button>
+      }
+    </nav>
+
+    <!-- Tab Content -->
+    <div class="tab-content" role="tabpanel">
+      <!-- Overview Tab -->
+      @if (activeTab() === 'overview') {
+        <div class="overview-grid">
+          <!-- Employee Card -->
+          <section class="card employee-card">
+            <h3>{{ 'CASES.EMPLOYEE_INFO' | translate }}</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">{{ 'CASES.EMPLOYEE' | translate }}</span>
+                <span class="info-value">{{ caseDetail()!.employeeName }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">{{ 'EMPLOYEES.ID' | translate }}</span>
+                <span class="info-value code">{{ caseDetail()!.employeeCode }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">{{ 'EMPLOYEES.FACTORY' | translate }}</span>
+                <span class="info-value">{{ caseDetail()!.factory }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">{{ 'EMPLOYEES.DEPARTMENT' | translate }}</span>
+                <span class="info-value">{{ caseDetail()!.department }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">{{ 'EMPLOYEES.DESIGNATION' | translate }}</span>
+                <span class="info-value">{{ caseDetail()!.designation }}</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- Case Info Card -->
+          <section class="card case-info-card">
+            <h3>{{ 'CASES.CASE_DETAILS' | translate }}</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">{{ 'CASES.CASE_TYPE' | translate }}</span>
+                <span class="info-value">{{ caseDetail()!.caseTypeName }}</span>
+              </div>
+              <div class="info-item">
+                <span class="info-label">{{ 'CASES.STATUS' | translate }}</span>
+                <span class="info-value">
+                  <span class="status-badge small" [class]="getStatusClass(caseDetail()!.status)">
+                    {{ caseDetail()!.statusName }}
+                  </span>
+                </span>
+              </div>
+              @if (caseDetail()!.outcomeName) {
+                <div class="info-item">
+                  <span class="info-label">{{ 'CASES.OUTCOME' | translate }}</span>
+                  <span class="info-value">{{ caseDetail()!.outcomeName }}</span>
+                </div>
+              }
+              <div class="info-item">
+                <span class="info-label">{{ 'CASES.CREATED_ON' | translate }}</span>
+                <span class="info-value">{{ formatDate(caseDetail()!.createdAt) }}</span>
+              </div>
+              @if (caseDetail()!.closedAt) {
+                <div class="info-item">
+                  <span class="info-label">{{ 'CASES.CLOSED_ON' | translate }}</span>
+                  <span class="info-value">{{ formatDate(caseDetail()!.closedAt!) }}</span>
+                </div>
+              }
+            </div>
+          </section>
+
+          <!-- Description Card -->
+          <section class="card description-card full-width">
+            <h3>{{ 'CASES.SUMMARY' | translate }}</h3>
+            <p class="description-text">{{ caseDetail()!.description }}</p>
+          </section>
+
+          <!-- Warning Letter Link -->
+          @if (caseDetail()!.hasWarningLetter) {
+            <section class="card warning-letter-card full-width">
+              <div class="warning-letter-content">
+                <span class="warning-icon">📄</span>
+                <div class="warning-info">
+                  <h4>{{ 'CASES.WARNING_LETTER_ISSUED' | translate }}</h4>
+                  <p>{{ 'CASES.VIEW_WARNING_LETTER_DESC' | translate }}</p>
+                </div>
+                <button class="btn btn-outline" (click)="viewWarningLetter()" [disabled]="loadingWarningLetter()">
+                  {{ 'CASES.VIEW_WARNING_LETTER' | translate }}
+                </button>
+              </div>
+            </section>
+          }
+        </div>
+      }
+
+      <!-- Investigation Tab (Remarks) -->
+      @if (activeTab() === 'investigation') {
+        <div class="investigation-content">
+          @if (loadingRemarks()) {
+            <div class="loading-spinner">
+              <div class="spinner"></div>
+              <span>{{ 'COMMON.LOADING' | translate }}</span>
+            </div>
+          }
+
+          @if (!loadingRemarks() && remarks().length === 0) {
+            <div class="empty-state">
+              <span class="empty-icon">💬</span>
+              <h4>{{ 'CASES.NO_REMARKS' | translate }}</h4>
+              <p>{{ 'CASES.NO_REMARKS_DESC' | translate }}</p>
+              @if (canManage()) {
+                <button class="btn btn-primary" (click)="openRemarkModal()">
+                  {{ 'CASES.ADD_REMARK' | translate }}
+                </button>
+              }
+            </div>
+          }
+
+          @if (remarks().length > 0) {
+            <div class="remarks-list">
+              @for (remark of remarks(); track remark.id) {
+                <div class="remark-card">
+                  <div class="remark-header">
+                    <span class="remark-author">{{ remark.userName }}</span>
+                    <span class="remark-date">{{ formatDateTime(remark.createdAt) }}</span>
+                  </div>
+                  <p class="remark-text">{{ remark.text }}</p>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- Attachments Tab -->
+      @if (activeTab() === 'attachments') {
+        <div class="attachments-content">
+          @if (uploading()) {
+            <div class="upload-progress">
+              <div class="spinner"></div>
+              <span>{{ 'CASES.UPLOADING' | translate }}...</span>
+            </div>
+          }
+
+          @if (loadingAttachments()) {
+            <div class="loading-spinner">
+              <div class="spinner"></div>
+              <span>{{ 'COMMON.LOADING' | translate }}</span>
+            </div>
+          }
+
+          @if (!loadingAttachments() && attachments().length === 0 && !uploading()) {
+            <div class="empty-state">
+              <span class="empty-icon">📎</span>
+              <h4>{{ 'CASES.NO_ATTACHMENTS' | translate }}</h4>
+              <p>{{ 'CASES.NO_ATTACHMENTS_DESC' | translate }}</p>
+              @if (canManage()) {
+                <label class="btn btn-primary upload-btn">
+                  {{ 'CASES.UPLOAD_EVIDENCE' | translate }}
+                  <input type="file" hidden (change)="onFileSelected($event)"
+                         accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif">
+                </label>
+              }
+            </div>
+          }
+
+          @if (attachments().length > 0) {
+            <div class="attachments-grid">
+              @for (attachment of attachments(); track attachment.id) {
+                <div class="attachment-card">
+                  <span class="file-icon">{{ getFileIcon(attachment.contentType) }}</span>
+                  <div class="file-info">
+                    <span class="file-name">{{ attachment.fileName }}</span>
+                    <span class="file-meta">
+                      {{ formatFileSize(attachment.fileSize) }} • {{ formatDate(attachment.uploadedAt) }}
+                    </span>
+                  </div>
+                  <div class="file-actions">
+                    <button class="btn-icon" (click)="downloadAttachment(attachment)" 
+                            title="{{ 'COMMON.DOWNLOAD' | translate }}">
+                      ⬇️
+                    </button>
+                    @if (canManage()) {
+                      <button class="btn-icon danger" (click)="deleteAttachment(attachment)"
+                              title="{{ 'COMMON.DELETE' | translate }}">
+                        🗑️
+                      </button>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- History Tab -->
+      @if (activeTab() === 'history') {
+        <div class="history-content">
+          @if (loadingHistory()) {
+            <div class="loading-spinner">
+              <div class="spinner"></div>
+              <span>{{ 'COMMON.LOADING' | translate }}</span>
+            </div>
+          }
+
+          @if (!loadingHistory() && history().length === 0) {
+            <div class="empty-state">
+              <span class="empty-icon">📜</span>
+              <h4>{{ 'CASES.NO_HISTORY' | translate }}</h4>
+              <p>{{ 'CASES.NO_HISTORY_DESC' | translate }}</p>
+            </div>
+          }
+
+          @if (history().length > 0) {
+            <div class="timeline">
+              @for (event of history(); track event.id) {
+                <div class="timeline-item" [class]="getHistoryEventStyle(event.eventType).color">
+                  <div class="timeline-marker">
+                    <span class="event-icon">{{ getHistoryEventStyle(event.eventType).icon }}</span>
+                  </div>
+                  <div class="timeline-content">
+                    <div class="timeline-header">
+                      <span class="event-type">{{ event.eventTypeName }}</span>
+                      <span class="event-time">{{ formatDateTime(event.createdAt) }}</span>
+                    </div>
+                    <p class="event-description">{{ event.description }}</p>
+                    @if (event.userName) {
+                      <span class="event-user">by {{ event.userName }}</span>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Status Change Modal -->
+  @if (showStatusModal()) {
+    <div class="modal-overlay" (click)="closeStatusModal()">
+      <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <header class="modal-header">
+          <h2>{{ 'CASES.CHANGE_STATUS' | translate }}</h2>
+          <button class="btn-close" (click)="closeStatusModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <p class="current-status">
+            {{ 'CASES.CURRENT_STATUS' | translate }}: 
+            <span class="status-badge" [class]="getStatusClass(caseDetail()!.status)">
+              {{ caseDetail()!.statusName }}
+            </span>
+          </p>
+
+          <div class="form-group">
+            <label>{{ 'CASES.NEW_STATUS' | translate }}</label>
+            <div class="status-options">
+              @for (status of statuses; track status.value) {
+                <label class="status-option" 
+                       [class.disabled]="!canTransitionTo(status.value)"
+                       [class.selected]="selectedStatus === status.label">
+                  <input type="radio" 
+                         name="status" 
+                         [value]="status.label.replace(' ', '')"
+                         [(ngModel)]="selectedStatus"
+                         [disabled]="!canTransitionTo(status.value)">
+                  <span class="status-badge" [class]="status.color">{{ status.label }}</span>
+                </label>
+              }
+            </div>
+          </div>
+
+          @if (selectedStatus === 'Closed' && !caseDetail()!.outcome) {
+            <div class="form-group">
+              <label>{{ 'CASES.OUTCOME' | translate }} <span class="required">*</span></label>
+              <select [(ngModel)]="selectedOutcome" required>
+                <option [ngValue]="undefined">{{ 'CASES.SELECT_OUTCOME' | translate }}</option>
+                @for (outcome of outcomes; track outcome.value) {
+                  <option [ngValue]="outcome.value">{{ outcome.label }}</option>
+                }
+              </select>
+            </div>
+          }
+        </div>
+        <footer class="modal-footer">
+          <button class="btn btn-outline" (click)="closeStatusModal()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button class="btn btn-primary" 
+                  (click)="updateStatus()" 
+                  [disabled]="!selectedStatus || actionInProgress() || (selectedStatus === 'Closed' && !caseDetail()!.outcome && !selectedOutcome)">
+            @if (actionInProgress()) {
+              <span class="spinner-small"></span>
+            }
+            {{ 'COMMON.SAVE' | translate }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- Add Remark Modal -->
+  @if (showRemarkModal()) {
+    <div class="modal-overlay" (click)="closeRemarkModal()">
+      <div class="modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+        <header class="modal-header">
+          <h2>{{ 'CASES.ADD_REMARK' | translate }}</h2>
+          <button class="btn-close" (click)="closeRemarkModal()">×</button>
+        </header>
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="remark-text">{{ 'CASES.REMARK_TEXT' | translate }}</label>
+            <textarea 
+              id="remark-text"
+              [(ngModel)]="newRemark"
+              rows="5"
+              placeholder="{{ 'CASES.REMARK_PLACEHOLDER' | translate }}"
+              maxlength="2000"></textarea>
+            <span class="char-count">{{ newRemark.length }} / 2000</span>
+          </div>
+        </div>
+        <footer class="modal-footer">
+          <button class="btn btn-outline" (click)="closeRemarkModal()">
+            {{ 'COMMON.CANCEL' | translate }}
+          </button>
+          <button class="btn btn-primary" 
+                  (click)="addRemark()" 
+                  [disabled]="!newRemark.trim() || actionInProgress()">
+            @if (actionInProgress()) {
+              <span class="spinner-small"></span>
+            }
+            {{ 'CASES.ADD_REMARK' | translate }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+</div>

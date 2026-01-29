@@ -1,0 +1,311 @@
+.warning-letter-create-container {
+  width: 100%;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 24px;
+
+  .header {
+    margin-bottom: 32px;
+
+    h2 {
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 8px 0;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin: 0;
+    }
+  }
+
+  .loading-state,
+  .error-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 2px dashed var(--border-color);
+
+    p {
+      margin: 0 0 16px 0;
+      color: var(--text-primary);
+      font-size: 16px;
+    }
+  }
+
+  .investigation-selector-wrapper {
+    .selector-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 24px;
+      
+      h3 {
+        margin: 0 0 8px 0;
+        color: var(--text-primary);
+        font-size: 18px;
+      }
+      
+      .description {
+        margin: 0 0 24px 0;
+        color: var(--text-secondary);
+        font-size: 14px;
+      }
+    }
+
+    .investigations-list {
+      .form-group {
+        margin-bottom: 12px;
+        
+        label {
+          display: block;
+          margin-bottom: 8px;
+          font-weight: 500;
+          color: var(--text-primary);
+          
+          .required {
+            color: var(--color-danger);
+          }
+        }
+        
+        .form-control {
+          width: 100%;
+          padding: 10px;
+          border: 1px solid var(--border-color);
+          border-radius: 4px;
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+          font-size: 14px;
+          
+          &:focus {
+            outline: none;
+            border-color: var(--color-secondary);
+          }
+          
+          &.is-invalid {
+            border-color: var(--color-danger);
+          }
+        }
+        
+        .error-message {
+          margin-top: 4px;
+          color: var(--color-danger);
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 32px;
+    color: var(--text-secondary);
+  }
+
+  .form-wrapper {
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .investigation-info {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 16px;
+
+    h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0 0 12px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+
+      .info-item {
+        label {
+          display: block;
+          font-size: 11px;
+          font-weight: 600;
+          color: var(--text-secondary);
+          text-transform: uppercase;
+          margin-bottom: 4px;
+        }
+
+        p {
+          margin: 0;
+          font-size: 13px;
+          color: var(--text-primary);
+          word-break: break-all;
+        }
+      }
+    }
+  }
+
+  .warning-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    .form-label {
+      font-weight: 500;
+      color: var(--text-primary);
+      font-size: 14px;
+
+      .required {
+        color: var(--danger-color);
+      }
+    }
+
+    .form-control {
+      padding: 10px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s ease;
+
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+
+      &.textarea {
+        resize: vertical;
+        min-height: 200px;
+      }
+
+      &.is-invalid {
+        border-color: var(--danger-color);
+        background-color: rgba(239, 68, 68, 0.05);
+      }
+    }
+
+    select.form-control {
+      cursor: pointer;
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>');
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      background-size: 20px;
+      padding-right: 32px;
+    }
+
+    .error-message {
+      font-size: 12px;
+      color: var(--danger-color);
+      margin-top: -4px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 8px;
+
+    .btn {
+      padding: 10px 24px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      &:active:not(:disabled) {
+        transform: translateY(0);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      &.btn-primary {
+        background-color: var(--color-secondary, #3b82f6);
+        color: white;
+        opacity: 1;
+        visibility: visible;
+
+        &:hover:not(:disabled) {
+          background-color: #2563eb;
+          box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+      }
+
+      &.btn-secondary {
+        background-color: var(--bg-secondary);
+        color: var(--text-primary);
+        border: 1px solid var(--border-color);
+
+        &:hover:not(:disabled) {
+          background-color: var(--bg-tertiary);
+        }
+      }
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .warning-letter-create-container {
+    padding: 16px;
+
+    .header {
+      margin-bottom: 24px;
+
+      h2 {
+        font-size: 20px;
+      }
+    }
+
+    .form-wrapper {
+      padding: 16px;
+    }
+
+    .investigation-info {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .form-actions {
+      flex-direction: column;
+
+      .btn {
+        width: 100%;
+      }
+    }
+  }
+}

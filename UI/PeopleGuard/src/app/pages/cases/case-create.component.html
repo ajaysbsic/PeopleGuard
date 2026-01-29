@@ -1,0 +1,316 @@
+<div class="case-create-container">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <h1 id="page-title">{{ 'CASES.CREATE_TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'CASES.CREATE_SUBTITLE' | translate }}</p>
+    </div>
+  </header>
+
+  <!-- Form -->
+  <form [formGroup]="form" 
+        (ngSubmit)="onSubmit()" 
+        class="case-form"
+        aria-labelledby="page-title"
+        role="form">
+    
+    <!-- Employee Selection Section -->
+    <fieldset class="form-section">
+      <legend class="section-title">
+        <span class="section-icon">👤</span>
+        {{ 'CASES.EMPLOYEE_INFO' | translate }}
+      </legend>
+
+      <div class="form-row">
+        <!-- Employee Search with Autocomplete -->
+        <div class="form-group form-group-lg" 
+             [class.has-error]="submitted && form.get('employeeId')?.invalid">
+          <label for="employee-search" class="form-label">
+            {{ 'CASES.EMPLOYEE' | translate }}
+            <span class="required" aria-hidden="true">*</span>
+          </label>
+          
+          <div class="autocomplete-wrapper" role="combobox" aria-haspopup="listbox" [attr.aria-expanded]="showDropdown()">
+            @if (selectedEmployee()) {
+              <!-- Selected employee display -->
+              <div class="selected-employee" role="status" aria-live="polite">
+                <div class="employee-info">
+                  <span class="employee-id">{{ selectedEmployee()?.employeeId }}</span>
+                  <span class="employee-name">{{ selectedEmployee()?.name }}</span>
+                </div>
+                <button type="button" 
+                        class="clear-btn" 
+                        (click)="clearEmployee()"
+                        aria-label="{{ 'CASES.CLEAR_EMPLOYEE' | translate }}">
+                  ✕
+                </button>
+              </div>
+            } @else {
+              <!-- Search input -->
+              <div class="search-input-wrapper">
+                <span class="search-icon" aria-hidden="true">🔍</span>
+                <input #searchInput
+                       type="text"
+                       id="employee-search"
+                       class="form-control search-input"
+                       [value]="searchQuery()"
+                       (input)="onSearchInput($event)"
+                       (keydown)="onSearchKeydown($event)"
+                       (blur)="onSearchBlur()"
+                       (focus)="onSearchFocus()"
+                       placeholder="{{ 'CASES.SEARCH_EMPLOYEE_PLACEHOLDER' | translate }}"
+                       autocomplete="off"
+                       role="searchbox"
+                       aria-controls="employee-listbox"
+                       [attr.aria-activedescendant]="highlightedIndex() >= 0 ? 'emp-option-' + highlightedIndex() : null">
+                
+                @if (loadingEmployees()) {
+                  <span class="loading-indicator" aria-label="{{ 'COMMON.LOADING' | translate }}">⏳</span>
+                }
+              </div>
+
+              <!-- Dropdown results -->
+              @if (showDropdown() && filteredEmployees().length > 0) {
+                <ul id="employee-listbox" 
+                    class="autocomplete-dropdown" 
+                    role="listbox"
+                    aria-label="{{ 'CASES.EMPLOYEE_RESULTS' | translate }}">
+                  @for (emp of filteredEmployees(); track emp.employeeId; let i = $index) {
+                    <li [id]="'emp-option-' + i"
+                        class="dropdown-item"
+                        [class.highlighted]="highlightedIndex() === i"
+                        role="option"
+                        [attr.aria-selected]="highlightedIndex() === i"
+                        (mousedown)="selectEmployee(emp)">
+                      <div class="emp-main">
+                        <span class="emp-id">{{ emp.employeeId }}</span>
+                        <span class="emp-name">{{ emp.name }}</span>
+                      </div>
+                      <div class="emp-meta">
+                        <span class="emp-dept">{{ emp.department }}</span>
+                        <span class="emp-factory">{{ emp.factory }}</span>
+                      </div>
+                    </li>
+                  }
+                </ul>
+              }
+
+              @if (showDropdown() && searchQuery().length >= 2 && filteredEmployees().length === 0 && !loadingEmployees()) {
+                <div class="no-results" role="status">
+                  {{ 'CASES.NO_EMPLOYEES_FOUND' | translate }}
+                </div>
+              }
+            }
+          </div>
+
+          @if (submitted && form.get('employeeId')?.invalid) {
+            <div class="error-message" role="alert">
+              {{ 'CASES.EMPLOYEE_REQUIRED' | translate }}
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Employee Details (shown when selected) -->
+      @if (selectedEmployee()) {
+        <div class="employee-details" role="region" aria-label="{{ 'CASES.EMPLOYEE_DETAILS' | translate }}">
+          <div class="detail-item">
+            <span class="detail-label">{{ 'EMPLOYEES.DEPARTMENT' | translate }}</span>
+            <span class="detail-value">{{ selectedEmployee()?.department }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">{{ 'EMPLOYEES.FACTORY' | translate }}</span>
+            <span class="detail-value">{{ selectedEmployee()?.factory }}</span>
+          </div>
+          <div class="detail-item">
+            <span class="detail-label">{{ 'EMPLOYEES.DESIGNATION' | translate }}</span>
+            <span class="detail-value">{{ selectedEmployee()?.designation }}</span>
+          </div>
+        </div>
+      }
+    </fieldset>
+
+    <!-- Case Details Section -->
+    <fieldset class="form-section">
+      <legend class="section-title">
+        <span class="section-icon">📋</span>
+        {{ 'CASES.CASE_DETAILS' | translate }}
+      </legend>
+
+      <!-- Case Type -->
+      <div class="form-group" [class.has-error]="submitted && form.get('caseType')?.invalid">
+        <label for="case-type" class="form-label">
+          {{ 'CASES.CASE_TYPE' | translate }}
+          <span class="required" aria-hidden="true">*</span>
+        </label>
+        <select id="case-type"
+                formControlName="caseType"
+                class="form-control"
+                aria-describedby="case-type-help">
+          @for (type of caseTypes; track type.value) {
+            <option [value]="type.value">{{ type.labelEn }}</option>
+          }
+        </select>
+        <small id="case-type-help" class="help-text">
+          {{ 'CASES.CASE_TYPE_HELP' | translate }}
+        </small>
+      </div>
+
+      <!-- Case Summary -->
+      <div class="form-group" [class.has-error]="submitted && form.get('summary')?.invalid">
+        <label for="case-summary" class="form-label">
+          {{ 'CASES.SUMMARY' | translate }}
+          <span class="required" aria-hidden="true">*</span>
+        </label>
+        <textarea id="case-summary"
+                  formControlName="summary"
+                  class="form-control textarea"
+                  rows="6"
+                  [attr.aria-invalid]="submitted && form.get('summary')?.invalid"
+                  aria-describedby="summary-help summary-error"
+                  placeholder="{{ 'CASES.SUMMARY_PLACEHOLDER' | translate }}"></textarea>
+        
+        <div class="textarea-footer">
+          <small id="summary-help" class="help-text">
+            {{ 'CASES.SUMMARY_HELP' | translate: { min: SUMMARY_MIN_LENGTH, max: SUMMARY_MAX_LENGTH } }}
+          </small>
+          <span class="char-count" [class.warning]="summaryRemaining < 100" [class.error]="summaryRemaining < 0">
+            {{ summaryLength }} / {{ SUMMARY_MAX_LENGTH }}
+          </span>
+        </div>
+
+        @if (submitted && form.get('summary')?.errors) {
+          <div id="summary-error" class="error-message" role="alert">
+            @if (form.get('summary')?.errors?.['required']) {
+              {{ 'CASES.SUMMARY_REQUIRED' | translate }}
+            } @else if (form.get('summary')?.errors?.['minlength']) {
+              {{ 'CASES.SUMMARY_MIN_LENGTH' | translate: { min: SUMMARY_MIN_LENGTH } }}
+            } @else if (form.get('summary')?.errors?.['maxlength']) {
+              {{ 'CASES.SUMMARY_MAX_LENGTH' | translate: { max: SUMMARY_MAX_LENGTH } }}
+            }
+          </div>
+        }
+      </div>
+    </fieldset>
+
+    <!-- Attachments Section -->
+    <fieldset class="form-section">
+      <legend class="section-title">
+        <span class="section-icon">📎</span>
+        {{ 'CASES.ATTACHMENTS' | translate }}
+        <span class="optional-badge">{{ 'COMMON.OPTIONAL' | translate }}</span>
+      </legend>
+
+      <!-- Upload area -->
+      <div class="upload-zone"
+           [class.disabled]="!canAddMoreFiles()"
+           (dragover)="onDragOver($event)"
+           (drop)="onDrop($event)"
+           role="region"
+           aria-label="{{ 'CASES.UPLOAD_AREA' | translate }}">
+        
+        <input #fileInput
+               type="file"
+               multiple
+               [accept]="'.jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.xls,.xlsx,.txt'"
+               (change)="onFilesSelected($event)"
+               class="file-input"
+               [disabled]="!canAddMoreFiles()"
+               aria-describedby="upload-help">
+
+        <div class="upload-content" (click)="triggerFileInput()">
+          <span class="upload-icon" aria-hidden="true">📤</span>
+          <p class="upload-text">
+            {{ 'CASES.DRAG_DROP' | translate }}
+            <button type="button" class="browse-link">{{ 'CASES.BROWSE' | translate }}</button>
+          </p>
+          <small id="upload-help" class="upload-limits">
+            {{ 'CASES.UPLOAD_LIMITS' | translate: { maxSize: maxFileSizeMb, maxFiles: maxFiles } }}
+          </small>
+        </div>
+      </div>
+
+      <!-- Upload error -->
+      @if (uploadError()) {
+        <div class="upload-error" role="alert">
+          <span class="error-icon" aria-hidden="true">⚠️</span>
+          {{ uploadError() }}
+        </div>
+      }
+
+      <!-- Attachment list -->
+      @if (attachments().length > 0) {
+        <ul class="attachment-list" role="list" aria-label="{{ 'CASES.UPLOADED_FILES' | translate }}">
+          @for (attachment of attachments(); track attachment.id) {
+            <li class="attachment-item" [class.error]="attachment.progress.status === 'error'">
+              <div class="attachment-info">
+                <span class="file-icon" aria-hidden="true">📄</span>
+                <div class="file-details">
+                  <span class="file-name">{{ attachment.file.name }}</span>
+                  <span class="file-size">{{ formatFileSize(attachment.file.size) }}</span>
+                </div>
+              </div>
+
+              <div class="attachment-status">
+                @switch (attachment.progress.status) {
+                  @case ('uploading') {
+                    <div class="progress-bar" role="progressbar" 
+                         [attr.aria-valuenow]="attachment.progress.progress"
+                         aria-valuemin="0" aria-valuemax="100">
+                      <div class="progress-fill" [style.width.%]="attachment.progress.progress"></div>
+                    </div>
+                    <span class="progress-text">{{ attachment.progress.progress }}%</span>
+                  }
+                  @case ('complete') {
+                    <span class="status-icon success" aria-label="{{ 'COMMON.SUCCESS' | translate }}">✓</span>
+                  }
+                  @case ('error') {
+                    <span class="status-icon error" aria-label="{{ 'COMMON.ERROR' | translate }}">✕</span>
+                    <button type="button" class="retry-btn" (click)="retryUpload(attachment.id)">
+                      {{ 'COMMON.RETRY' | translate }}
+                    </button>
+                  }
+                  @case ('pending') {
+                    <span class="status-icon pending" aria-label="{{ 'COMMON.PENDING' | translate }}">⏳</span>
+                  }
+                }
+              </div>
+
+              <button type="button" 
+                      class="remove-btn"
+                      (click)="removeAttachment(attachment.id)"
+                      aria-label="{{ 'CASES.REMOVE_FILE' | translate: { name: attachment.file.name } }}">
+                🗑️
+              </button>
+            </li>
+          }
+        </ul>
+
+        <div class="attachment-summary">
+          {{ 'CASES.FILES_SELECTED' | translate: { count: attachments().length, max: maxFiles } }}
+          ({{ formatFileSize(totalUploadSize()) }})
+        </div>
+      }
+    </fieldset>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" 
+              class="btn btn-secondary"
+              (click)="onCancel()"
+              [disabled]="loading">
+        {{ 'COMMON.CANCEL' | translate }}
+      </button>
+      <button type="submit" 
+              class="btn btn-primary"
+              [disabled]="loading || !allUploadsComplete()">
+        @if (loading) {
+          <span class="spinner" aria-hidden="true"></span>
+          {{ 'COMMON.CREATING' | translate }}
+        } @else {
+          {{ 'CASES.SUBMIT' | translate }}
+        }
+      </button>
+    </div>
+  </form>
+</div>

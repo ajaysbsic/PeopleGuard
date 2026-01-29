@@ -1,0 +1,366 @@
+.employee-detail-container {
+  width: 100%;
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+
+  .header {
+    margin-bottom: 24px;
+
+    .btn-back {
+      padding: 8px 16px;
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: var(--bg-tertiary);
+      }
+    }
+  }
+
+  .loading-state {
+    text-align: center;
+    padding: 48px 24px;
+    color: var(--text-secondary);
+
+    p {
+      margin: 0;
+      font-size: 16px;
+    }
+  }
+
+  .loading-state-small {
+    text-align: center;
+    padding: 24px;
+    color: var(--text-secondary);
+
+    p {
+      margin: 0;
+      font-size: 14px;
+    }
+  }
+
+  .error-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--bg-secondary);
+    border-radius: 8px;
+    border: 2px solid var(--danger-color);
+
+    p {
+      margin: 0 0 16px 0;
+      color: var(--text-primary);
+      font-size: 16px;
+    }
+  }
+
+  .employee-details {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+
+    .title-section {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+
+      h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+        flex: 1;
+      }
+
+      .employee-id {
+        font-size: 13px;
+        color: var(--text-tertiary);
+        margin: 0;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        white-space: nowrap;
+
+        &.status-active {
+          background-color: rgba(34, 197, 94, 0.1);
+          color: #22c55e;
+          border: 1px solid rgba(34, 197, 94, 0.3);
+        }
+
+        &.status-inactive {
+          background-color: rgba(156, 163, 175, 0.1);
+          color: #6b7280;
+          border: 1px solid rgba(156, 163, 175, 0.3);
+        }
+
+        &.status-suspended {
+          background-color: rgba(239, 68, 68, 0.1);
+          color: #ef4444;
+          border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+      }
+    }
+
+    .content-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+
+      .info-section,
+      .investigations-section {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .info-card,
+      .investigations-card {
+        background: var(--bg-primary);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 20px;
+
+        h3 {
+          font-size: 16px;
+          font-weight: 600;
+          color: var(--text-primary);
+          margin: 0 0 16px 0;
+          padding-bottom: 12px;
+          border-bottom: 2px solid var(--border-color);
+        }
+      }
+
+      .info-card {
+        .info-group {
+          margin-bottom: 16px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+          }
+
+          p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--text-primary);
+          }
+        }
+      }
+
+      .investigations-card {
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 12px;
+          margin-bottom: 20px;
+          padding-bottom: 16px;
+          border-bottom: 1px solid var(--border-color);
+
+          .stat-item {
+            text-align: center;
+
+            .stat-value {
+              display: block;
+              font-size: 24px;
+              font-weight: 700;
+              color: var(--primary-color);
+            }
+
+            .stat-label {
+              display: block;
+              font-size: 12px;
+              color: var(--text-secondary);
+              margin-top: 4px;
+            }
+          }
+        }
+
+        .empty-state {
+          text-align: center;
+          padding: 24px;
+          color: var(--text-secondary);
+          font-size: 14px;
+        }
+
+        .investigations-list {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+
+          .investigation-item {
+            padding: 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+
+            &:hover {
+              background: var(--bg-tertiary);
+              border-color: var(--primary-color);
+              transform: translateX(4px);
+            }
+
+            .investigation-header {
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              gap: 8px;
+              margin-bottom: 8px;
+
+              strong {
+                color: var(--text-primary);
+                font-size: 13px;
+                flex: 1;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+              }
+
+              .status-badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 12px;
+                font-size: 11px;
+                font-weight: 600;
+                white-space: nowrap;
+
+                &.status-0 {
+                  background-color: rgba(59, 130, 246, 0.1);
+                  color: #3b82f6;
+                  border: 1px solid rgba(59, 130, 246, 0.2);
+                }
+
+                &.status-1 {
+                  background-color: rgba(251, 191, 36, 0.1);
+                  color: #f59e0b;
+                  border: 1px solid rgba(251, 191, 36, 0.2);
+                }
+
+                &.status-2 {
+                  background-color: rgba(34, 197, 94, 0.1);
+                  color: #22c55e;
+                  border: 1px solid rgba(34, 197, 94, 0.2);
+                }
+              }
+            }
+
+            .investigation-date {
+              font-size: 11px;
+              color: var(--text-tertiary);
+              margin: 0;
+            }
+
+            .investigation-desc {
+              font-size: 12px;
+              color: var(--text-secondary);
+              margin: 4px 0 0 0;
+              line-height: 1.4;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+// Buttons
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+
+    &:hover:not(:disabled) {
+      background-color: #2563eb;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+  }
+}
+
+// Responsive Design
+@media (max-width: 1024px) {
+  .employee-detail-container {
+    .employee-details {
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .employee-detail-container {
+    padding: 16px;
+
+    .employee-details {
+      .title-section {
+        flex-direction: column;
+        align-items: flex-start;
+
+        h2 {
+          font-size: 22px;
+        }
+      }
+
+      .content-grid {
+        gap: 16px;
+
+        .info-card,
+        .investigations-card {
+          padding: 16px;
+        }
+
+        .investigations-card {
+          .stats-grid {
+            grid-template-columns: 1fr;
+          }
+        }
+      }
+    }
+  }
+}

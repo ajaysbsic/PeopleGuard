@@ -1,0 +1,67 @@
+2026-01-29 13:45:01.173 +03:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-01-29 13:45:01.204 +03:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-01-29 13:45:01.207 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2026-01-29 13:45:01.208 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT OBJECT_ID(N'[__EFMigrationsHistory]');
+2026-01-29 13:45:01.220 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [MigrationId], [ProductVersion]
+FROM [__EFMigrationsHistory]
+ORDER BY [MigrationId];
+2026-01-29 13:45:01.228 +03:00 [INF] Applying migration '20260129104303_AddQrTables'.
+2026-01-29 13:45:01.272 +03:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Investigations] DROP CONSTRAINT [FK_Investigations_Employees_EmployeeId];
+2026-01-29 13:45:01.275 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [WarningLetters] DROP CONSTRAINT [FK_WarningLetters_Employees_EmployeeId];
+2026-01-29 13:45:01.282 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [QrTokens] (
+    [Id] uniqueidentifier NOT NULL,
+    [Token] nvarchar(256) NOT NULL,
+    [TargetType] nvarchar(50) NOT NULL,
+    [TargetId] nvarchar(256) NOT NULL,
+    [Label] nvarchar(200) NULL,
+    [QrPngPath] nvarchar(max) NOT NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    [ExpiresAt] datetime2 NOT NULL,
+    [IsActive] bit NOT NULL,
+    [CreatedBy] uniqueidentifier NOT NULL,
+    CONSTRAINT [PK_QrTokens] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_QrTokens_AspNetUsers_CreatedBy] FOREIGN KEY ([CreatedBy]) REFERENCES [AspNetUsers] ([Id]) ON DELETE NO ACTION
+);
+2026-01-29 13:45:01.285 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE TABLE [QrSubmissions] (
+    [Id] uniqueidentifier NOT NULL,
+    [TokenId] uniqueidentifier NOT NULL,
+    [Category] nvarchar(100) NOT NULL,
+    [Message] nvarchar(max) NOT NULL,
+    [SubmitterName] nvarchar(max) NULL,
+    [SubmitterEmail] nvarchar(max) NULL,
+    [SubmitterPhone] nvarchar(max) NULL,
+    [AttachmentUrls] nvarchar(max) NULL,
+    [RelatedInvestigationId] uniqueidentifier NULL,
+    [CreatedAt] datetime2 NOT NULL,
+    CONSTRAINT [PK_QrSubmissions] PRIMARY KEY ([Id]),
+    CONSTRAINT [FK_QrSubmissions_Investigations_RelatedInvestigationId] FOREIGN KEY ([RelatedInvestigationId]) REFERENCES [Investigations] ([Id]) ON DELETE SET NULL,
+    CONSTRAINT [FK_QrSubmissions_QrTokens_TokenId] FOREIGN KEY ([TokenId]) REFERENCES [QrTokens] ([Id]) ON DELETE CASCADE
+);
+2026-01-29 13:45:01.289 +03:00 [INF] Executed DbCommand (2ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_QrSubmissions_CreatedAt] ON [QrSubmissions] ([CreatedAt]);
+2026-01-29 13:45:01.290 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_QrSubmissions_RelatedInvestigationId] ON [QrSubmissions] ([RelatedInvestigationId]);
+2026-01-29 13:45:01.292 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_QrSubmissions_TokenId] ON [QrSubmissions] ([TokenId]);
+2026-01-29 13:45:01.293 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_QrTokens_CreatedBy] ON [QrTokens] ([CreatedBy]);
+2026-01-29 13:45:01.295 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE INDEX [IX_QrTokens_ExpiresAt] ON [QrTokens] ([ExpiresAt]);
+2026-01-29 13:45:01.296 +03:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+CREATE UNIQUE INDEX [IX_QrTokens_Token] ON [QrTokens] ([Token]);
+2026-01-29 13:45:01.304 +03:00 [INF] Executed DbCommand (6ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [Investigations] ADD CONSTRAINT [FK_Investigations_Employees_EmployeeId] FOREIGN KEY ([EmployeeId]) REFERENCES [Employees] ([Id]) ON DELETE CASCADE;
+2026-01-29 13:45:01.305 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+ALTER TABLE [WarningLetters] ADD CONSTRAINT [FK_WarningLetters_Employees_EmployeeId] FOREIGN KEY ([EmployeeId]) REFERENCES [Employees] ([Id]) ON DELETE NO ACTION;
+2026-01-29 13:45:01.307 +03:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20260129104303_AddQrTables', N'8.0.6');

@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="API/EmployeeInvestigationSystem.API.csproj" />
+  </Folder>
+  <Folder Name="/API/Application/">
+    <Project Path="API/Application/EmployeeInvestigationSystem.Application.csproj" />
+  </Folder>
+  <Folder Name="/API/Domain/">
+    <Project Path="API/Domain/EmployeeInvestigationSystem.Domain.csproj" />
+  </Folder>
+  <Folder Name="/API/Infrastructure/">
+    <Project Path="API/Infrastructure/EmployeeInvestigationSystem.Infrastructure.csproj" />
+  </Folder>
+</Solution>

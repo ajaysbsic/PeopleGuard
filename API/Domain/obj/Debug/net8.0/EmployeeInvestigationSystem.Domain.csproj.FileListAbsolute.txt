@@ -1,0 +1,12 @@
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\bin\Debug\net8.0\EmployeeInvestigationSystem.Domain.deps.json
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\bin\Debug\net8.0\EmployeeInvestigationSystem.Domain.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\bin\Debug\net8.0\EmployeeInvestigationSystem.Domain.pdb
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.csproj.AssemblyReference.cache
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.GeneratedMSBuildEditorConfig.editorconfig
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.AssemblyInfoInputs.cache
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.AssemblyInfo.cs
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.csproj.CoreCompileInputs.cache
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\refint\EmployeeInvestigationSystem.Domain.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\EmployeeInvestigationSystem.Domain.pdb
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Domain\obj\Debug\net8.0\ref\EmployeeInvestigationSystem.Domain.dll

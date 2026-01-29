@@ -1,0 +1,89 @@
+<div class="leave-detail" *ngIf="leave(); else loadingTpl">
+  <header class="page-header">
+    <div>
+      <h1>{{ 'LEAVES.DETAIL_TITLE' | translate }} #{{ leave()?.leaveId }}</h1>
+      <p class="subtitle">{{ 'LEAVES.DETAIL_SUBTITLE' | translate }}</p>
+    </div>
+    <div class="status-chip" [class]="statusClass(leave()?.status)">{{ leave() ? leavesService.getStatusLabel(leave()!.status) : '' }}</div>
+  </header>
+
+  <div *ngIf="isFinal()" class="banner final" role="status">
+    {{ 'LEAVES.LOCKED' | translate }}
+  </div>
+
+  <section class="card">
+    <h3>{{ 'LEAVES.EMPLOYEE' | translate }}</h3>
+    <div class="info-grid">
+      <div>
+        <span class="label">{{ 'LEAVES.EMPLOYEE_NAME' | translate }}</span>
+        <span class="value">{{ leave()?.employeeName }}</span>
+      </div>
+      <div>
+        <span class="label">{{ 'LEAVES.EMPLOYEE_ID' | translate }}</span>
+        <span class="value">{{ leave()?.employeeId }}</span>
+      </div>
+      <div>
+        <span class="label">{{ 'LEAVES.TYPE' | translate }}</span>
+        <span class="value">{{ leave() ? leavesService.getTypeLabel(leave()!.type) : '' }}</span>
+      </div>
+      <div>
+        <span class="label">{{ 'LEAVES.DATES' | translate }}</span>
+        <span class="value">{{ leave()?.startDate | date:'mediumDate' }} → {{ leave()?.endDate | date:'mediumDate' }}</span>
+      </div>
+      <div>
+        <span class="label">{{ 'LEAVES.CREATED_BY' | translate }}</span>
+        <span class="value">{{ leave()?.createdByName }} · {{ leave()?.createdAt | date:'short' }}</span>
+      </div>
+      <div *ngIf="leave()?.reviewedByName">
+        <span class="label">{{ 'LEAVES.REVIEWED_BY' | translate }}</span>
+        <span class="value">{{ leave()?.reviewedByName }} · {{ leave()?.reviewedAt | date:'short' }}</span>
+      </div>
+      <div class="full">
+        <span class="label">{{ 'LEAVES.REASON' | translate }}</span>
+        <p class="value">{{ leave()?.reason || ('LEAVES.NO_REASON' | translate) }}</p>
+      </div>
+      <div class="full" *ngIf="leave()?.reviewRemark">
+        <span class="label">{{ 'LEAVES.REVIEW_REMARK' | translate }}</span>
+        <p class="value">{{ leave()?.reviewRemark }}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <div class="card-head">
+      <h3>{{ 'LEAVES.ATTACHMENTS' | translate }}</h3>
+    </div>
+    <div *ngIf="leave()?.attachments?.length === 0" class="muted">{{ 'LEAVES.NO_ATTACHMENTS' | translate }}</div>
+    <ul class="attachments" *ngIf="leave()?.attachments?.length">
+      <li *ngFor="let file of leave()?.attachments">
+        <div>
+          <strong>{{ file.fileName }}</strong>
+          <small>{{ file.sizeBytes | number }} bytes</small>
+        </div>
+        <a [href]="file.url" target="_blank" rel="noopener" class="btn-link">{{ 'COMMON.DOWNLOAD' | translate }}</a>
+      </li>
+    </ul>
+  </section>
+
+  <section class="card actions-card">
+    <div class="action-row" *ngIf="canSubmitDraft()">
+      <button class="btn btn-primary" (click)="submitDraft()" [disabled]="loading()">{{ 'LEAVES.SUBMIT' | translate }}</button>
+    </div>
+
+    <div class="review" *ngIf="canReview()">
+      <h3>{{ 'LEAVES.REVIEW_PANEL' | translate }}</h3>
+      <textarea rows="3" [(ngModel)]="reviewRemark" placeholder="{{ 'LEAVES.REVIEW_PLACEHOLDER' | translate }}"></textarea>
+      <div class="review-actions">
+        <button class="btn" (click)="startReview()" [disabled]="!canStartReview() || loading()">{{ 'LEAVES.START_REVIEW' | translate }}</button>
+        <button class="btn btn-success" (click)="approve()" [disabled]="!canDecide() || loading()">{{ 'LEAVES.APPROVE' | translate }}</button>
+        <button class="btn btn-danger" (click)="reject()" [disabled]="!canDecide() || loading()">{{ 'LEAVES.REJECT' | translate }}</button>
+      </div>
+    </div>
+
+    <div *ngIf="error()" class="error" role="alert">{{ error() }}</div>
+  </section>
+</div>
+
+<ng-template #loadingTpl>
+  <div class="loading">{{ 'COMMON.LOADING' | translate }}</div>
+</ng-template>

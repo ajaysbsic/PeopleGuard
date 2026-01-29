@@ -1,0 +1,97 @@
+<div class="investigation-create-container">
+  <div class="header">
+    <h2>Create Investigation</h2>
+    <p class="subtitle">Fill in the details to create a new investigation</p>
+  </div>
+
+  <div class="form-wrapper">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="investigation-form">
+      
+      <!-- Employee Selection -->
+      <div class="form-group">
+        <label for="employeeId" class="form-label">Employee <span class="required">*</span></label>
+        <div *ngIf="loadingEmployees" class="loading-state">
+          <p>Loading employees...</p>
+        </div>
+        <select 
+          *ngIf="!loadingEmployees"
+          id="employeeId" 
+          formControlName="employeeId"
+          class="form-control"
+          [class.is-invalid]="submitted && form.get('employeeId')?.invalid">
+          <option value="">Select an employee...</option>
+          <option *ngFor="let emp of employees" [value]="emp.id">
+            {{ emp.name }} (ID: {{ emp.employeeId }})
+          </option>
+        </select>
+        <div *ngIf="submitted && form.get('employeeId')?.invalid" class="error-message">
+          Please select an employee
+        </div>
+      </div>
+
+      <!-- Case Type -->
+      <div class="form-group">
+        <label for="caseType" class="form-label">Case Type <span class="required">*</span></label>
+        <select 
+          id="caseType" 
+          formControlName="caseType"
+          class="form-control"
+          [class.is-invalid]="submitted && form.get('caseType')?.invalid">
+          <option *ngFor="let type of caseTypes" [value]="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+        <div *ngIf="submitted && form.get('caseType')?.invalid" class="error-message">
+          Please select a case type
+        </div>
+      </div>
+
+      <!-- Title -->
+      <div class="form-group">
+        <label for="title" class="form-label">Title <span class="required">*</span></label>
+        <input 
+          id="title" 
+          type="text" 
+          formControlName="title"
+          class="form-control"
+          [class.is-invalid]="submitted && form.get('title')?.invalid"
+          placeholder="Enter investigation title">
+        <div *ngIf="submitted && form.get('title')?.invalid" class="error-message">
+          Title is required
+        </div>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label for="description" class="form-label">Description <span class="required">*</span></label>
+        <textarea 
+          id="description" 
+          formControlName="description"
+          class="form-control textarea"
+          [class.is-invalid]="submitted && form.get('description')?.invalid"
+          placeholder="Enter investigation description"
+          rows="5"></textarea>
+        <div *ngIf="submitted && form.get('description')?.invalid" class="error-message">
+          Description is required
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="loading">
+          {{ loading ? 'Creating...' : 'Create Investigation' }}
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

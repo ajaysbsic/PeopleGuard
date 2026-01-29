@@ -1,0 +1,271 @@
+<div class="case-list-container">
+  <!-- Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <h1>{{ 'CASES.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'CASES.LIST_SUBTITLE' | translate }}</p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-outline" (click)="toggleFilters()" [attr.aria-expanded]="showFilters()">
+        <span class="btn-icon">🔍</span>
+        {{ 'COMMON.FILTER' | translate }}
+        @if (hasActiveFilters) {
+          <span class="filter-badge" aria-label="Active filters">•</span>
+        }
+      </button>
+      <button class="btn btn-primary" (click)="onCreateCase()">
+        <span class="btn-icon">➕</span>
+        {{ 'CASES.CREATE_NEW' | translate }}
+      </button>
+    </div>
+  </header>
+
+  <!-- Filter Panel -->
+  @if (showFilters()) {
+    <div class="filter-panel" role="region" aria-label="{{ 'COMMON.FILTER' | translate }}">
+      <div class="filter-grid">
+        <!-- Employee Search -->
+        <div class="filter-group">
+          <label for="filter-employee" class="filter-label">{{ 'CASES.EMPLOYEE' | translate }}</label>
+          <input 
+            type="text"
+            id="filter-employee"
+            class="filter-input"
+            [(ngModel)]="filterEmployee"
+            (ngModelChange)="onFilterChange()"
+            placeholder="{{ 'CASES.SEARCH_EMPLOYEE_PLACEHOLDER' | translate }}">
+        </div>
+
+        <!-- Factory -->
+        <div class="filter-group">
+          <label for="filter-factory" class="filter-label">{{ 'EMPLOYEES.FACTORY' | translate }}</label>
+          <select 
+            id="filter-factory"
+            class="filter-input"
+            [(ngModel)]="filterFactory"
+            (ngModelChange)="onFilterChange()">
+            <option value="">{{ 'COMMON.ALL' | translate }}</option>
+            @for (factory of factories(); track factory) {
+              <option [value]="factory">{{ factory }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Case Type -->
+        <div class="filter-group">
+          <label for="filter-type" class="filter-label">{{ 'CASES.CASE_TYPE' | translate }}</label>
+          <select 
+            id="filter-type"
+            class="filter-input"
+            [(ngModel)]="filterType"
+            (ngModelChange)="onFilterChange()">
+            <option [ngValue]="undefined">{{ 'COMMON.ALL' | translate }}</option>
+            @for (type of caseTypes; track type.value) {
+              <option [ngValue]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Status -->
+        <div class="filter-group">
+          <label for="filter-status" class="filter-label">{{ 'CASES.STATUS' | translate }}</label>
+          <select 
+            id="filter-status"
+            class="filter-input"
+            [(ngModel)]="filterStatus"
+            (ngModelChange)="onFilterChange()">
+            <option [ngValue]="undefined">{{ 'COMMON.ALL' | translate }}</option>
+            @for (status of caseStatuses; track status.value) {
+              <option [ngValue]="status.value">{{ status.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Date From -->
+        <div class="filter-group">
+          <label for="filter-from" class="filter-label">{{ 'CASES.DATE_FROM' | translate }}</label>
+          <input 
+            type="date"
+            id="filter-from"
+            class="filter-input"
+            [(ngModel)]="filterFromDate"
+            (ngModelChange)="onFilterChange()">
+        </div>
+
+        <!-- Date To -->
+        <div class="filter-group">
+          <label for="filter-to" class="filter-label">{{ 'CASES.DATE_TO' | translate }}</label>
+          <input 
+            type="date"
+            id="filter-to"
+            class="filter-input"
+            [(ngModel)]="filterToDate"
+            (ngModelChange)="onFilterChange()">
+        </div>
+      </div>
+
+      @if (hasActiveFilters) {
+        <div class="filter-actions">
+          <button class="btn btn-text" (click)="clearFilters()">
+            {{ 'COMMON.CLEAR_FILTERS' | translate }}
+          </button>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Results Summary -->
+  <div class="results-summary">
+    <span class="results-count">
+      {{ 'CASES.SHOWING_RESULTS' | translate: { count: cases().length, total: totalItems() } }}
+    </span>
+    <div class="page-size-selector">
+      <label for="page-size">{{ 'COMMON.SHOW' | translate }}:</label>
+      <select id="page-size" [ngModel]="pageSize()" (ngModelChange)="onPageSizeChange($event)">
+        @for (size of pageSizeOptions; track size) {
+          <option [value]="size">{{ size }}</option>
+        }
+      </select>
+    </div>
+  </div>
+
+  <!-- Data Table -->
+  <div class="table-container">
+    @if (loading()) {
+      <div class="loading-overlay">
+        <div class="spinner"></div>
+        <span>{{ 'COMMON.LOADING' | translate }}</span>
+      </div>
+    }
+
+    @if (!loading() && cases().length === 0) {
+      <div class="empty-state" role="status">
+        <div class="empty-icon">📋</div>
+        <h3>{{ 'CASES.NO_RESULTS' | translate }}</h3>
+        <p>{{ 'CASES.NO_RESULTS_DESC' | translate }}</p>
+        @if (hasActiveFilters) {
+          <button class="btn btn-outline" (click)="clearFilters()">
+            {{ 'COMMON.CLEAR_FILTERS' | translate }}
+          </button>
+        }
+      </div>
+    }
+
+    @if (cases().length > 0) {
+      <table class="data-table" role="grid" aria-label="{{ 'CASES.LIST' | translate }}">
+        <thead>
+          <tr>
+            <th scope="col" class="sortable" (click)="onSort('caseId')" (keydown.enter)="onSort('caseId')" tabindex="0">
+              {{ 'CASES.CASE_ID' | translate }}
+              <span class="sort-icon">{{ getSortIcon('caseId') }}</span>
+            </th>
+            <th scope="col" class="sortable" (click)="onSort('employee')" (keydown.enter)="onSort('employee')" tabindex="0">
+              {{ 'CASES.EMPLOYEE' | translate }}
+              <span class="sort-icon">{{ getSortIcon('employee') }}</span>
+            </th>
+            <th scope="col" class="sortable" (click)="onSort('factory')" (keydown.enter)="onSort('factory')" tabindex="0">
+              {{ 'EMPLOYEES.FACTORY' | translate }}
+              <span class="sort-icon">{{ getSortIcon('factory') }}</span>
+            </th>
+            <th scope="col" class="sortable" (click)="onSort('type')" (keydown.enter)="onSort('type')" tabindex="0">
+              {{ 'CASES.CASE_TYPE' | translate }}
+              <span class="sort-icon">{{ getSortIcon('type') }}</span>
+            </th>
+            <th scope="col" class="sortable" (click)="onSort('status')" (keydown.enter)="onSort('status')" tabindex="0">
+              {{ 'CASES.STATUS' | translate }}
+              <span class="sort-icon">{{ getSortIcon('status') }}</span>
+            </th>
+            <th scope="col" class="sortable" (click)="onSort('createdAt')" (keydown.enter)="onSort('createdAt')" tabindex="0">
+              {{ 'CASES.CREATED_ON' | translate }}
+              <span class="sort-icon">{{ getSortIcon('createdAt') }}</span>
+            </th>
+            <th scope="col" class="sortable" (click)="onSort('updated')" (keydown.enter)="onSort('updated')" tabindex="0">
+              {{ 'CASES.LAST_UPDATED' | translate }}
+              <span class="sort-icon">{{ getSortIcon('updated') }}</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (caseItem of cases(); track caseItem.id) {
+            <tr class="data-row" 
+                (click)="onRowClick(caseItem)" 
+                (keydown.enter)="onRowClick(caseItem)"
+                tabindex="0"
+                role="row"
+                [attr.aria-label]="'Case ' + caseItem.caseId">
+              <td class="case-id-cell">
+                <span class="case-id">{{ caseItem.caseId }}</span>
+              </td>
+              <td class="employee-cell">
+                <div class="employee-info">
+                  <span class="employee-name">{{ caseItem.employeeName }}</span>
+                  <span class="employee-code">{{ caseItem.employeeCode }}</span>
+                </div>
+              </td>
+              <td>{{ caseItem.factory }}</td>
+              <td>
+                <span class="case-type-badge">{{ caseItem.caseTypeName }}</span>
+              </td>
+              <td>
+                <span class="status-badge" [class]="getStatusClass(caseItem.status)">
+                  {{ caseItem.statusName }}
+                </span>
+              </td>
+              <td>{{ formatDate(caseItem.createdAt) }}</td>
+              <td>{{ caseItem.updatedAt ? formatDate(caseItem.updatedAt) : '-' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+
+  <!-- Pagination -->
+  @if (totalPages() > 1) {
+    <nav class="pagination" role="navigation" aria-label="{{ 'COMMON.PAGINATION' | translate }}">
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage() === 1"
+        (click)="goToPage(1)"
+        aria-label="{{ 'COMMON.FIRST_PAGE' | translate }}">
+        ⏮️
+      </button>
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage() === 1"
+        (click)="goToPage(currentPage() - 1)"
+        aria-label="{{ 'COMMON.PREVIOUS_PAGE' | translate }}">
+        ◀️
+      </button>
+
+      @for (page of getVisiblePages(); track page) {
+        <button 
+          class="pagination-btn"
+          [class.active]="page === currentPage()"
+          (click)="goToPage(page)"
+          [attr.aria-current]="page === currentPage() ? 'page' : null">
+          {{ page }}
+        </button>
+      }
+
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage() === totalPages()"
+        (click)="goToPage(currentPage() + 1)"
+        aria-label="{{ 'COMMON.NEXT_PAGE' | translate }}">
+        ▶️
+      </button>
+      <button 
+        class="pagination-btn"
+        [disabled]="currentPage() === totalPages()"
+        (click)="goToPage(totalPages())"
+        aria-label="{{ 'COMMON.LAST_PAGE' | translate }}">
+        ⏭️
+      </button>
+
+      <span class="pagination-info">
+        {{ 'COMMON.PAGE_OF' | translate: { current: currentPage(), total: totalPages() } }}
+      </span>
+    </nav>
+  }
+</div>

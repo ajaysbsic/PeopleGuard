@@ -1,0 +1,123 @@
+<div class="warning-letter-create-container">
+  <div class="header">
+    <h2>Create Warning Letter</h2>
+    <p class="subtitle">Generate a warning letter from an investigation</p>
+  </div>
+
+  <!-- Loading Investigation from URL -->
+  <div *ngIf="loadingInvestigation" class="loading-state">
+    <p>Loading investigation...</p>
+  </div>
+
+  <!-- Investigation Selector -->
+  <div *ngIf="!loadingInvestigation && showInvestigationSelector && !investigation" class="investigation-selector-wrapper">
+    <div class="selector-card">
+      <h3>Select Investigation</h3>
+      <p class="description">Choose a closed investigation to create a warning letter for</p>
+
+      <div *ngIf="loadingInvestigations" class="loading-state">
+        <p>Loading investigations...</p>
+      </div>
+
+      <div *ngIf="!loadingInvestigations && investigations.length === 0" class="empty-state">
+        <p>No closed investigations available</p>
+        <button class="btn btn-secondary" (click)="onCancel()">Cancel</button>
+      </div>
+
+      <form *ngIf="!loadingInvestigations && investigations.length > 0" [formGroup]="form" class="investigations-list">
+        <div class="form-group">
+          <label for="investigation-select" class="form-label">Investigation <span class="required">*</span></label>
+          <select 
+            id="investigation-select"
+            formControlName="investigationId"
+            class="form-control"
+            (change)="onInvestigationSelect(form.get('investigationId')?.value)"
+            [class.is-invalid]="submitted && form.get('investigationId')?.invalid">
+            <option value="">-- Select an investigation --</option>
+            <option *ngFor="let inv of investigations" [value]="inv.id">
+              {{ inv.title }} ({{ inv.employeeId }})
+            </option>
+          </select>
+          <div *ngIf="submitted && form.get('investigationId')?.invalid" class="error-message">
+            Please select an investigation
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Form -->
+  <div *ngIf="!loadingInvestigation && investigation" class="form-wrapper">
+    <div class="investigation-info">
+      <h3>Investigation Details</h3>
+      <div class="info-grid">
+        <div class="info-item">
+          <label>Investigation ID</label>
+          <p>{{ investigation.id }}</p>
+        </div>
+        <div class="info-item">
+          <label>Employee ID</label>
+          <p>{{ investigation.employeeId }}</p>
+        </div>
+        <div class="info-item">
+          <label>Title</label>
+          <p>{{ investigation.title }}</p>
+        </div>
+      </div>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="warning-form">
+      
+      <!-- Outcome -->
+      <div class="form-group">
+        <label for="outcome" class="form-label">Outcome <span class="required">*</span></label>
+        <select 
+          id="outcome" 
+          formControlName="outcome"
+          class="form-control"
+          (change)="onOutcomeChange()"
+          [class.is-invalid]="submitted && form.get('outcome')?.invalid">
+          <option *ngFor="let type of outcomeTypes" [value]="type.value">
+            {{ type.label }}
+          </option>
+        </select>
+        <div *ngIf="submitted && form.get('outcome')?.invalid" class="error-message">
+          Please select an outcome
+        </div>
+      </div>
+
+      <!-- Reason/Content -->
+      <div class="form-group">
+        <label for="reason" class="form-label">Letter Content <span class="required">*</span></label>
+        <textarea 
+          id="reason" 
+          formControlName="reason"
+          class="form-control textarea"
+          [class.is-invalid]="submitted && form.get('reason')?.invalid"
+          placeholder="Enter warning letter content"
+          rows="8"></textarea>
+        <div *ngIf="submitted && form.get('reason')?.invalid" class="error-message">
+          Letter content is required
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="form-actions">
+        <button 
+          type="submit" 
+          class="btn btn-primary"
+          [disabled]="loading">
+          {{ loading ? 'Creating...' : 'Create Warning Letter' }}
+        </button>
+        <button 
+          type="button" 
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="loading">
+          Cancel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+

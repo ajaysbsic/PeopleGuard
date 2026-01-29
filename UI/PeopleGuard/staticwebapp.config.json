@@ -1,0 +1,32 @@
+{
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/assets/*", "/*.{css,js,png,gif,ico,jpg,jpeg,svg,woff,woff2,ttf,eot,json,map}"]
+  },
+  "routes": [
+    {
+      "route": "/assets/*"
+    },
+    {
+      "route": "/*.{css,scss,js,png,gif,ico,jpg,jpeg,svg,woff,woff2,ttf,eot,json,map}"
+    }
+  ],
+  "mimeTypes": {
+    ".json": "application/json",
+    ".wasm": "application/wasm",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2"
+  },
+  "responseOverrides": {
+    "404": {
+      "rewrite": "/index.html",
+      "statusCode": 200
+    }
+  },
+  "auth": {
+    "identityProviders": {}
+  },
+  "globalHeaders": {
+    "cache-control": "public, max-age=0, must-revalidate"
+  }
+}

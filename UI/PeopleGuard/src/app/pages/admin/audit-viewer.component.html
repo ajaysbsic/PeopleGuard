@@ -1,0 +1,221 @@
+<div class="audit-viewer-container">
+  <h1>Audit Trail Viewer</h1>
+  <p class="subtitle">View and analyze system activity logs with sensitive data masked.</p>
+
+  <div class="filter-section">
+    <h2>Filters</h2>
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="filter-user">User Name</label>
+        <input
+          id="filter-user"
+          type="text"
+          [(ngModel)]="filters().userName"
+          (change)="onFilterChange()"
+          placeholder="e.g., john.doe@company.com"
+          aria-label="Filter by user name"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-action">Action</label>
+        <select
+          id="filter-action"
+          [(ngModel)]="filters().action"
+          (change)="onFilterChange()"
+          aria-label="Filter by action"
+        >
+          <option value="">All Actions</option>
+          @for (action of actionOptions; track action) {
+            <option [value]="action">{{ action }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-entity">Entity Type</label>
+        <select
+          id="filter-entity"
+          [(ngModel)]="filters().entityType"
+          (change)="onFilterChange()"
+          aria-label="Filter by entity type"
+        >
+          <option value="">All Entities</option>
+          @for (entity of entityTypeOptions; track entity) {
+            <option [value]="entity">{{ entity }}</option>
+          }
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-row">
+      <div class="filter-group">
+        <label for="filter-start">Start Date</label>
+        <input
+          id="filter-start"
+          type="date"
+          [(ngModel)]="filters().startDate"
+          (change)="onFilterChange()"
+          aria-label="Filter by start date"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-end">End Date</label>
+        <input
+          id="filter-end"
+          type="date"
+          [(ngModel)]="filters().endDate"
+          (change)="onFilterChange()"
+          aria-label="Filter by end date"
+        />
+      </div>
+
+      <div class="filter-group">
+        <label for="page-size">Page Size</label>
+        <select
+          id="page-size"
+          [ngModel]="pageSize()"
+          (ngModelChange)="pageSize.set($event); onFilterChange()"
+          aria-label="Logs per page"
+        >
+          <option [value]="10">10</option>
+          <option [value]="25">25</option>
+          <option [value]="50">50</option>
+          <option [value]="100">100</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="filter-actions">
+      <button
+        (click)="loadLogs()"
+        class="btn-primary"
+        [disabled]="loading()"
+        aria-label="Apply filters and load logs"
+      >
+        @if (loading()) {
+          <span>Loading...</span>
+        } @else {
+          <span>Refresh</span>
+        }
+      </button>
+      <button
+        (click)="onExport()"
+        class="btn-secondary"
+        [disabled]="loading() || logs().length === 0"
+        aria-label="Export logs to CSV"
+      >
+        Export CSV
+      </button>
+    </div>
+  </div>
+
+  @if (error()) {
+    <div class="error-alert" role="alert">
+      <strong>Error:</strong> {{ error() }}
+    </div>
+  }
+
+  <div class="logs-section">
+    <div class="logs-header">
+      <h2>Logs ({{ totalRecords() }} records)</h2>
+      @if (loading()) {
+        <span class="loading-spinner" aria-label="Loading logs"></span>
+      }
+    </div>
+
+    @if (logs().length === 0) {
+      <div class="no-data">
+        <p>No audit logs found matching the selected filters.</p>
+      </div>
+    } @else {
+      <div class="logs-table-wrapper">
+        <table class="logs-table" role="grid" aria-label="Audit logs">
+          <thead>
+            <tr role="row">
+              <th scope="col">Timestamp</th>
+              <th scope="col">User</th>
+              <th scope="col">Action</th>
+              <th scope="col">Entity</th>
+              <th scope="col">IP Address</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (log of logs(); track log.id) {
+              <tr role="row">
+                <td data-label="Timestamp">{{ log.timestamp | date: 'short' }}</td>
+                <td data-label="User">{{ log.userName }}</td>
+                <td data-label="Action">{{ log.action }}</td>
+                <td data-label="Entity">{{ log.entityType }} {{ log.entityId }}</td>
+                <td data-label="IP Address">{{ log.ipAddress }}</td>
+                <td data-label="Status">
+                  <span class="status" [class]="'status-' + (log.statusCode >= 200 && log.statusCode < 300 ? 'success' : 'error')">
+                    {{ log.statusCode >= 200 && log.statusCode < 300 ? 'Success' : 'Failed' }}
+                  </span>
+                </td>
+                <td data-label="Actions">
+                  <button
+                    (click)="showDetails(log)"
+                    class="btn-link"
+                    aria-label="View details for log entry"
+                  >
+                    Details
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <div class="pagination" role="navigation" aria-label="Pagination">
+        <button
+          (click)="goToPage(pageIndex() - 1)"
+          [disabled]="pageIndex() === 0"
+          class="btn-icon"
+          aria-label="Previous page"
+        >
+          ← Previous
+        </button>
+
+        <div class="page-buttons">
+          @for (page of paginationPages; track page) {
+            @if (page === -1) {
+              <span class="page-ellipsis">...</span>
+            } @else {
+              <button
+                (click)="goToPage(page)"
+                [class.active]="page === pageIndex()"
+                class="btn-page"
+                [attr.aria-label]="'Go to page ' + (page + 1)"
+                [attr.aria-current]="page === pageIndex() ? 'page' : null"
+              >
+                {{ page + 1 }}
+              </button>
+            }
+          }
+        </div>
+
+        <button
+          (click)="goToPage(pageIndex() + 1)"
+          [disabled]="pageIndex() >= totalPages - 1"
+          class="btn-icon"
+          aria-label="Next page"
+        >
+          Next →
+        </button>
+      </div>
+    }
+  </div>
+
+  @if (showDetailsModal() && selectedLog()) {
+    <pg-json-modal
+      [data]="selectedLog()"
+      [title]="'Audit Log Details - ' + selectedLog()!.action"
+      (close)="closeDetails()"
+    />
+  }
+</div>

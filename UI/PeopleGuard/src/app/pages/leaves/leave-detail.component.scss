@@ -1,0 +1,131 @@
+.leave-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  .subtitle {
+    color: var(--text-muted);
+  }
+}
+
+.status-chip {
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+}
+
+.status-info { background: #e8f3ff; color: #0b6cfb; }
+.status-warning { background: #fff3cd; color: #8a6d1f; }
+.status-success { background: #e9f8f3; color: #1b7f4d; }
+.status-danger { background: #fde8e8; color: #b42318; }
+.status-muted { background: #f2f4f7; color: #475467; }
+
+.banner.final {
+  background: #fff7e6;
+  color: #8a6d1f;
+  border: 1px solid #f3d9a4;
+  padding: 10px;
+  border-radius: 6px;
+}
+
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 14px;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+
+  .label {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .value {
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .full {
+    grid-column: 1 / -1;
+  }
+}
+
+.attachments {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+  }
+}
+
+.actions-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.review textarea {
+  width: 100%;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 10px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.btn {
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+}
+
+.btn-primary { background: var(--color-primary); color: #fff; border-color: var(--color-primary); }
+.btn-success { background: #0f9d58; color: #fff; border-color: #0f9d58; }
+.btn-danger { background: #c0392b; color: #fff; border-color: #c0392b; }
+
+.error {
+  color: #b42318;
+  background: #fde8e8;
+  border: 1px solid #f8c7c7;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.loading { color: var(--text-muted); }

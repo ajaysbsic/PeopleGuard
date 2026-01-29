@@ -1,0 +1,121 @@
+<div class="qr-submit-container">
+  @if (success()) {
+    <div class="success-message">
+      <h2>Thank you for your submission!</h2>
+      <p>Your report has been received and will be reviewed shortly.</p>
+      <p>Redirecting in 3 seconds...</p>
+    </div>
+  } @else {
+    <div class="submit-form">
+      <h1>Submit Your Report</h1>
+      <p class="subtitle">Your submission is confidential and will be reviewed by authorized personnel.</p>
+
+      @if (error()) {
+        <div class="error-alert">
+          <strong>Error:</strong> {{ error() }}
+        </div>
+      }
+
+      <form (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="category">Report Type</label>
+          <select
+            id="category"
+            [(ngModel)]="form().category"
+            name="category"
+            [disabled]="loading()"
+            aria-label="Report type"
+            aria-describedby="category-help"
+          >
+            <option value="complaint">Complaint</option>
+            <option value="suggestion">Suggestion</option>
+            <option value="safety_concern">Safety Concern</option>
+          </select>
+          <small id="category-help">Select the type of report you want to submit</small>
+        </div>
+
+        <div class="form-group">
+          <label for="message">Message (Required)</label>
+          <textarea
+            id="message"
+            [(ngModel)]="form().message"
+            name="message"
+            [disabled]="loading()"
+            rows="6"
+            placeholder="Please provide details about your report..."
+            aria-label="Report message"
+            aria-required="true"
+          ></textarea>
+        </div>
+
+        <fieldset>
+          <legend>Optional Contact Information</legend>
+          <p class="fieldset-hint">You may leave this blank to remain anonymous.</p>
+
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input
+              id="name"
+              type="text"
+              [(ngModel)]="form().submitterName"
+              name="submitterName"
+              [disabled]="loading()"
+              placeholder="Your name (optional)"
+              aria-label="Submitter name"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              [(ngModel)]="form().submitterEmail"
+              name="submitterEmail"
+              [disabled]="loading()"
+              placeholder="your.email@company.com (optional)"
+              aria-label="Submitter email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input
+              id="phone"
+              type="tel"
+              [(ngModel)]="form().submitterPhone"
+              name="submitterPhone"
+              [disabled]="loading()"
+              placeholder="Phone number (optional)"
+              aria-label="Submitter phone"
+            />
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button
+            type="submit"
+            [disabled]="loading()"
+            class="btn-primary"
+            aria-label="Submit report"
+          >
+            @if (loading()) {
+              <span>Submitting...</span>
+            } @else {
+              <span>Submit Report</span>
+            }
+          </button>
+          <button
+            type="button"
+            (click)="reset()"
+            [disabled]="loading()"
+            class="btn-secondary"
+            aria-label="Clear form"
+          >
+            Clear
+          </button>
+        </div>
+      </form>
+    </div>
+  }
+</div>

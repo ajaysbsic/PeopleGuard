@@ -1,0 +1,74 @@
+<div class="qr-generate-container">
+  <div class="header">
+    <h2>Generate QR Token</h2>
+    <p>Create QR codes for public submissions (complaints, suggestions)</p>
+  </div>
+
+  <section class="form-card">
+    <h3>New QR Token</h3>
+    <div class="form-group">
+      <label>Target Type</label>
+      <select [(ngModel)]="form().targetType" [disabled]="loading()">
+        <option value="general">General</option>
+        <option value="employee">Employee</option>
+        <option value="location">Location</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Target ID / Description</label>
+      <input type="text" [(ngModel)]="form().targetId" placeholder="e.g., EMP-001 or Reception Desk" [disabled]="loading()">
+    </div>
+
+    <div class="form-group">
+      <label>Label (Optional)</label>
+      <input type="text" [(ngModel)]="form().label" placeholder="e.g., HR Department" [disabled]="loading()">
+    </div>
+
+    <button class="btn btn-primary" (click)="onGenerate()" [disabled]="loading()">
+      {{ loading() ? 'Generating...' : 'Generate QR' }}
+    </button>
+  </section>
+
+  <section class="preview-card" *ngIf="selectedToken()">
+    <h3>Generated QR Code</h3>
+    <div class="qr-preview">
+      <img [src]="selectedToken()!.qrImageUrl" alt="QR Code" class="qr-image">
+      <div class="qr-info">
+        <p><strong>Token:</strong> {{ selectedToken()!.token | slice:0:20 }}...</p>
+        <p><strong>Expires:</strong> {{ selectedToken()!.expiresAt | date:'short' }}</p>
+        <button class="btn btn-outline" (click)="downloadQr(selectedToken()!.tokenId)">Download PNG</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="tokens-card">
+    <h3>Active Tokens</h3>
+    <div *ngIf="loadingTokens()" class="loading">Loading...</div>
+    
+    <table *ngIf="!loadingTokens() && tokens().length">
+      <thead>
+        <tr>
+          <th>Label</th>
+          <th>Target</th>
+          <th>Active</th>
+          <th>Expires</th>
+          <th>Created</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let token of tokens()">
+          <td>{{ token.label || 'N/A' }}</td>
+          <td>{{ token.targetType }} - {{ token.targetId }}</td>
+          <td><span class="badge" [class.active]="token.isActive">{{ token.isActive ? 'Yes' : 'No' }}</span></td>
+          <td>{{ token.expiresAt | date:'short' }}</td>
+          <td>{{ token.createdAt | date:'short' }}</td>
+          <td><button class="link" (click)="downloadQr(token.id)">Download</button></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loadingTokens() && tokens().length === 0" class="empty">No tokens generated yet</div>
+  </section>
+</div>

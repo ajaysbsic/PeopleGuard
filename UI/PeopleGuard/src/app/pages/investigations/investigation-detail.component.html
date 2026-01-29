@@ -1,0 +1,77 @@
+<div class="investigation-detail-container">
+  <!-- Header -->
+  <div class="header">
+    <button class="btn btn-back" (click)="goBack()">← Back to Investigations</button>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-state">
+    <p>Loading investigation details...</p>
+  </div>
+
+  <!-- Investigation Details -->
+  <div *ngIf="!loading && investigation" class="investigation-details">
+    
+    <!-- Title Section -->
+    <div class="title-section">
+      <h2>{{ investigation.title }}</h2>
+      <p class="investigation-id">ID: {{ investigation.id }}</p>
+    </div>
+
+    <!-- Main Content Grid -->
+    <div class="content-grid">
+      
+      <!-- Left Column - Details -->
+      <div class="details-section">
+        <div class="info-card">
+          <h3>Investigation Details</h3>
+          
+          <div class="info-group">
+            <label>Employee ID</label>
+            <p>{{ investigation.employeeId }}</p>
+          </div>
+
+          <div class="info-group">
+            <label>Case Type</label>
+            <p>{{ getCaseTypeLabel(investigation.caseType) }}</p>
+          </div>
+
+          <div class="info-group">
+            <label>Status</label>
+            <p>
+              <span class="status-badge" [ngClass]="'status-' + (investigation.status | number)">
+                {{ getStatusLabel(investigation.status) }}
+              </span>
+            </p>
+          </div>
+
+          <div class="info-group">
+            <label>Outcome</label>
+            <p>{{ getOutcomeLabel(investigation.outcome) }}</p>
+          </div>
+
+          <div class="info-group">
+            <label>Description</label>
+            <p class="description">{{ investigation.description }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column - Workflow -->
+      <div class="workflow-section">
+        <pg-investigation-workflow
+          [investigation]="investigation"
+          (onStatusChange)="onStatusChange($event)"
+          (onAddRemark)="onAddRemark($event)"
+          (onCloseCase)="onCloseCase()">
+        </pg-investigation-workflow>
+      </div>
+    </div>
+  </div>
+
+  <!-- Not Found State -->
+  <div *ngIf="!loading && !investigation" class="error-state">
+    <p>Investigation not found</p>
+    <button class="btn btn-primary" (click)="goBack()">Back to Investigations</button>
+  </div>
+</div>

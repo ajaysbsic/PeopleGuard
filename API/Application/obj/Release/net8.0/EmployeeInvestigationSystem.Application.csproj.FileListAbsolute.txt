@@ -1,0 +1,15 @@
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\bin\Release\net8.0\EmployeeInvestigationSystem.Application.deps.json
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\bin\Release\net8.0\EmployeeInvestigationSystem.Application.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\bin\Release\net8.0\EmployeeInvestigationSystem.Application.pdb
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\bin\Release\net8.0\EmployeeInvestigationSystem.Domain.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\bin\Release\net8.0\EmployeeInvestigationSystem.Domain.pdb
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.csproj.AssemblyReference.cache
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.GeneratedMSBuildEditorConfig.editorconfig
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.AssemblyInfoInputs.cache
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.AssemblyInfo.cs
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.csproj.CoreCompileInputs.cache
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\Employee.B4D83668.Up2Date
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\refint\EmployeeInvestigationSystem.Application.dll
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\EmployeeInvestigationSystem.Application.pdb
+D:\AI Projects\ER\EmployeeInvestigationSystem\API\Application\obj\Release\net8.0\ref\EmployeeInvestigationSystem.Application.dll

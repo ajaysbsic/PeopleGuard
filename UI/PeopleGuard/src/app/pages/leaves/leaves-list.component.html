@@ -1,0 +1,111 @@
+<div class="leaves-container">
+  <header class="page-header">
+    <div>
+      <h1>{{ 'LEAVES.TITLE' | translate }}</h1>
+      <p class="subtitle">{{ 'LEAVES.LIST_SUBTITLE' | translate }}</p>
+    </div>
+    <div class="actions" *ngIf="canCreate">
+      <a routerLink="/leaves/new" class="btn btn-primary">{{ 'LEAVES.NEW_LEAVE' | translate }}</a>
+    </div>
+  </header>
+
+  <section class="filters" aria-label="Filters">
+    <form [formGroup]="filtersForm" (ngSubmit)="applyFilters()" class="filter-grid">
+      <label>
+        <span>{{ 'LEAVES.FILTER_EMPLOYEE' | translate }}</span>
+        <input type="text" formControlName="employeeId" placeholder="e.g. E123 or name" />
+      </label>
+      <label>
+        <span>{{ 'LEAVES.FILTER_TYPE' | translate }}</span>
+        <select formControlName="type">
+          <option value="">{{ 'COMMON.ALL' | translate }}</option>
+          <option *ngFor="let t of leaveTypes" [value]="t.value">{{ t.label }}</option>
+        </select>
+      </label>
+      <label>
+        <span>{{ 'LEAVES.FILTER_STATUS' | translate }}</span>
+        <select formControlName="status">
+          <option value="">{{ 'COMMON.ALL' | translate }}</option>
+          <option *ngFor="let s of leaveStatuses" [value]="s.value">{{ s.label }}</option>
+        </select>
+      </label>
+      <label>
+        <span>{{ 'LEAVES.FILTER_FROM' | translate }}</span>
+        <input type="date" formControlName="from" />
+      </label>
+      <label>
+        <span>{{ 'LEAVES.FILTER_TO' | translate }}</span>
+        <input type="date" formControlName="to" />
+      </label>
+      <div class="filter-actions">
+        <button type="submit" class="btn btn-primary" [disabled]="loading()">{{ 'COMMON.SHOW' | translate }}</button>
+        <button type="button" class="btn" (click)="clearFilters()">{{ 'COMMON.CLEAR_FILTERS' | translate }}</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="table-section" aria-live="polite">
+    <div class="table-head">
+      <h2>{{ 'LEAVES.LIST_TITLE' | translate }}</h2>
+      <span class="total" *ngIf="!loading()">{{ total() }} {{ 'LEAVES.RECORDS' | translate }}</span>
+      <span class="loading" *ngIf="loading()">{{ 'COMMON.LOADING' | translate }}</span>
+    </div>
+
+    <div *ngIf="error()" class="error" role="alert">{{ error() }}</div>
+
+    <div *ngIf="!loading() && leaves().length === 0" class="empty-state">
+      <p>{{ 'LEAVES.NO_RESULTS' | translate }}</p>
+    </div>
+
+    <div class="table-wrapper" *ngIf="leaves().length > 0">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>{{ 'LEAVES.EMPLOYEE' | translate }}</th>
+            <th>{{ 'LEAVES.TYPE' | translate }}</th>
+            <th>{{ 'LEAVES.DATES' | translate }}</th>
+            <th>{{ 'LEAVES.STATUS' | translate }}</th>
+            <th>{{ 'LEAVES.CREATED_BY' | translate }}</th>
+            <th>{{ 'COMMON.ACTIONS' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let leave of leaves()">
+            <td>
+              <div class="cell-employee">
+                <strong>{{ leave.employeeName }}</strong>
+                <small>{{ leave.employeeId }}</small>
+              </div>
+            </td>
+            <td>{{ leave.type | number : '1.0-0' }} - {{ leavesService.getTypeLabel(leave.type) }}</td>
+            <td>
+              <div class="cell-dates">
+                <span>{{ leave.startDate | date:'mediumDate' }}</span>
+                <span>→</span>
+                <span>{{ leave.endDate | date:'mediumDate' }}</span>
+              </div>
+            </td>
+            <td>
+              <span [class]="statusClass(leave.status)">{{ leavesService.getStatusLabel(leave.status) }}</span>
+            </td>
+            <td>
+              <div class="cell-created">
+                <span>{{ leave.createdByName }}</span>
+                <small>{{ leave.createdAt | date:'short' }}</small>
+              </div>
+            </td>
+            <td>
+              <a [routerLink]="['/leaves', leave.leaveId]" class="btn-link">{{ 'COMMON.VIEW' | translate }}</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="pagination" *ngIf="total() > size()">
+      <button class="btn" (click)="changePage(-1)" [disabled]="page() === 1">{{ 'COMMON.PREVIOUS_PAGE' | translate }}</button>
+      <span>{{ page() }} / {{ totalPages() }}</span>
+      <button class="btn" (click)="changePage(1)" [disabled]="page() >= totalPages()">{{ 'COMMON.NEXT_PAGE' | translate }}</button>
+    </div>
+  </section>
+</div>
